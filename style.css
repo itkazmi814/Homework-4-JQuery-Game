@@ -1,0 +1,42 @@
+body{
+	background-image: url("assets/background.jpg");
+	background-size: 100%;
+}
+
+header{
+	width: 80%;
+	/*margin: auto;*/
+}
+
+section{
+	width: 80%;
+}
+
+button{
+	background-color: rgba(255,255,255,0);
+	border: none;
+}
+
+.card{
+	background-color: rgba(255,255,255,0);
+	border: none;
+}
+
+.image-thumbnail{
+	background-color: rgba(255,255,255,0);
+}
+
+.instructions{
+	background-color: rgba(255,255,255,.4);
+	border: 2px;
+}
+
+.card{
+	margin: auto;
+	margin-top: 5%;
+}
+
+.img-handler{
+	width: 100%;
+	height: auto;
+}
