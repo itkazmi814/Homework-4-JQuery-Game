@@ -40,7 +40,6 @@ $(document).ready(function() {
 		this.cAtkVal = cAtkValInput;
 		this.html = htmlInput;
 		this.chosen = false;
-
 	}, //end characterGenerator function
 
 	characterPressed: function () {
@@ -50,20 +49,11 @@ $(document).ready(function() {
 		game.selectOpponents(this);
 
 		if(game.choseMyChar && game.choseEnemy){
-			console.log("you are ready to play with " + game.myChar.name + " and " + game.enemyChar.name)
 			game.fightSetup(); //repositions myChar and enemyChar, displays stats, and attack button
-
-
-
-
-
-
 		}
-		
 	}, // end characterPressed function
 
 	selectOpponents: function (context) {
-		console.log("entering character selection")
 		if(game.choseMyChar === false){ //block runs if you have not picked a character$(this).attr("id") === "pikachu")
 
 			for(var i = 0; i < game.charactersArray.length; i++){
@@ -75,7 +65,6 @@ $(document).ready(function() {
 				} //end if statement
 			} //end myChar for loop
 		}else if (game.choseMyChar === true) { //if you picked myChar, pick the enemy
-			console.log("entering else if")
 			for(var i = 0; i < game.charactersArray.length; i++){
 				if($(context).attr("id") === game.charactersArray[i].name.toLowerCase() && $(context).attr("id") !== game.myChar.name.toLowerCase()){
 					game.enemyChar = game.charactersArray[i]
@@ -87,7 +76,6 @@ $(document).ready(function() {
 		}else{
 			console.log("You already chose " + game.myChar.name + " as your character.")
 		} //end chosemyChar conditionals
-
 	}, //end selectOpponents function
 
 	attackButtonPressed: function () {
@@ -95,18 +83,21 @@ $(document).ready(function() {
 		game.myCharAttacks();
 		if(game.isCharAlive(game.enemyChar) === false){
 			game.benchEnemyStatus();
-			//select new enemy
+			if(game.choseEnemy === false){
+				$(".character-btn").on("click",game.characterPressed);
+			}
+			//
 		}
 		game.enemyCharAttacks();
 		if(game.isCharAlive(game.myChar) === false){
 			//LOSE
 		}
 
+
+
 	}, //end attackButtonPressed function
 
 	fightSetup: function () {
-		console.log("Entering fightSetup function")
-
 		$("#pos-two").html(this.myChar.html);
 		$("#pos-three").html(this.enemyChar.html);
 
@@ -114,15 +105,14 @@ $(document).ready(function() {
 		$("#pos-four").html(this.htmlEnemyStats);
 
 		this.updateOnScreenStats();
-
 	}, //end fightSetup 
 
 	updateOnScreenStats: function() {
-
+		//Update myChar stats
 		$("#my-name").html(this.myChar.name)
 		$("#my-hp").html("HP: " + this.myChar.hp)
 		$("#my-atk").html("ATK: " + this.myChar.atkVal)
-
+		//Update enemyChar stats
 		$("#enemy-name").html(this.enemyChar.name)
 		$("#enemy-hp").html("HP: " + this.enemyChar.hp)
 		$("#enemy-atk").html("ATK: " + this.enemyChar.atkVal)
@@ -141,33 +131,33 @@ $(document).ready(function() {
 
 	isCharAlive: function (char) {
 		if(char.hp > 0){
-			return true
+			return true //returns true if the character is alive
 		}
 		return false;
 	},
 
 	benchEnemyStatus: function () {
-		var posThreeFilled = false;
+		var posFourFilled = false; //Used to determine where to place enemyChar
+
 		for(var i=0; i<this.charactersArray.length; i++){
 			if(this.charactersArray[i].chosen === false){
-				if(posThreeFilled === false){
-					this.choseEnemy = false //allows you to pick a new enemy at character select screen
-					$("#pos-one").html(this.myChar.html); //puts myChar in pos1
-					$("#pos-three").html(this.charactersArray[i].html); //puts non-chosen enemy on field
-					posThreeFilled = true;
-				}else{
-					$("#pos-four").html(this.charactersArray[i].html); //puts non-chosen enemy on field
-				}
-				
+				$("#pos-one").html(this.myChar.html); //moves myChar in pos1
 				$("#pos-two").html(""); //makes space between myChar and remaining enemies
-				// this.enemyChar = null;
 
+				if(posFourFilled === false){
+					this.choseEnemy = false //allows you to pick a new enemy at character select screen
+					$("#pos-four").html(this.charactersArray[i].html); //puts non-chosen enemy on field
+					posFourFilled = true;
+					$("#pos-three").html("") //empties out the battle stats in pos4
+				}else{ //only runs if a second character is found remaining
+					$("#pos-three").html(this.charactersArray[i].html); //puts non-chosen enemy on field
+				}
 			}//end if
-
 		} //end for loop
+	
+		//this.choseEnemy === true if there are no enemies remaining
 
 	} //end benchEnemyStatus
-
 
 
 } //end game object
