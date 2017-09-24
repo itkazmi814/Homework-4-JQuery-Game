@@ -15,21 +15,37 @@ $(document).ready(function() {
 	lucario: null,
 	suicune: null,
 	gardevoir: null	,
-	charactersArray: [],		
+	charactersArray: [],
+	myCharWins: false,	
 
 	htmlMyCharStats: '<section class="stat-block mx-auto d-block"><div class="row text-center"><div id="my-name" class="col-md-12"><p> Name here </p></div></div><div class="row text-center"><div id="my-hp" class="col-md-12"> HP here </p></div></div><div class="row text-center"><div id="my-atk" class="col-md-12"><p> ATK here </p></div></div></section>',
 	htmlEnemyStats: '<section class="stat-block mx-auto d-block"><div class="row text-center"><div id="enemy-name" class="col-md-12"><p> Name here </p></div></div><div class="row text-center"><div id="enemy-hp" class="col-md-12"><p> HP here </p></div></div><div class="row text-center"><div id="enemy-atk" class="col-md-12"><p> ATK here </p></div></div></section>',
+	htmlPlayButton: '<button id="play-button" class="transparent"><img class"img-fluid mx-auto d-block" style="width: 20%, height: auto" src="assets/playbutton.png"></button>',
+	htmlAttackButton: '<button id="attack-button" class="transparent"><img class="img-fluid mx-auto d-block" src="assets/logo.png"></button>',
 
-	initializeCharacters: function () {
+
+	repositionAllCharacters: function () {
+		//create character objects and put them on screen
+		this.createCharacters();
+		
+	}, //end initializeGame
+
+	createCharacters: function () {
 		this.pikachu = new this.characterGenerator("Pikachu",110,6,6,this.htmlPikachu);
 		this.lucario = new this.characterGenerator("Lucario",120,6,6,this.htmlLucario);
 		this.suicune = new this.characterGenerator("Suicune",130,6,6,this.htmlSuicune);
 		this.gardevoir = new this.characterGenerator("Gardevoir",140,6,6,this.htmlGardevoir);
 
+		this.charactersArray = []
 		this.charactersArray.push(this.pikachu)
 		this.charactersArray.push(this.lucario)
 		this.charactersArray.push(this.suicune)
 		this.charactersArray.push(this.gardevoir)
+
+		$("#pos-one").html(this.pikachu.html);
+		$("#pos-two").html(this.lucario.html);
+		$("#pos-three").html(this.suicune.html);
+		$("#pos-four").html(this.gardevoir.html);
 	},
 
 	characterGenerator: function (nameInput, hpInput, atkValInput, cAtkValInput, htmlInput) {
@@ -86,18 +102,22 @@ $(document).ready(function() {
 			if(game.choseEnemy === false){
 				$(".character-btn").on("click",game.characterPressed);
 			}
-			//
+			if(game.myCharWins === true){
+				game.reset(); //myCharWins = true; launch WIN
+				// $(".character-btn").on("click",game.characterPressed);
+			}
 		}
+
 		game.enemyCharAttacks();
 		if(game.isCharAlive(game.myChar) === false){
-			//LOSE
+			game.reset(); //myCharWins = false (default); launch LOSE
+			// $(".character-btn").on("click",game.characterPressed);
 		}
-
-
-
 	}, //end attackButtonPressed function
 
 	fightSetup: function () {
+		
+
 		$("#pos-two").html(this.myChar.html);
 		$("#pos-three").html(this.enemyChar.html);
 
@@ -154,25 +174,58 @@ $(document).ready(function() {
 				}
 			}//end if
 		} //end for loop
+
+		if(this.choseEnemy === true){ //this.choseEnemy === true if there are no enemies remaining
+			this.myCharWins = true;
+		}
 	
-		//this.choseEnemy === true if there are no enemies remaining
+	}, //end benchEnemyStatus
 
-	} //end benchEnemyStatus
+	reset: function() {
+		if(this.myCharWins === true){
+			console.log("you win")
+		}else{
+			console.log("you lose")
+		}
 
+		$("#pos-two").html("");
+		$("#pos-three").html("");
+		$("#pos-one").html("");
+		$("#pos-four").html("");
+		$("#attack-button").html("")
+
+		this.choseMyChar = false,
+		this.choseEnemy = false;
+		this.myCharWins = false;
+
+		this.initializeGame();
+
+	},
+	
+	sendMessage: function(message) {
+		$("#message-box").html(message)
+	},
+
+	initializeGame: function () {
+		$("#play-button-box").html(this.htmlPlayButton)
+		this.sendMessage("Click Pikachu to play!")
+		$("#play-button-box").on("click",this.startGame)
+	},
+
+	startGame: function() {
+		$("#play-button-box").html("")
+		$("#attack-button").html(game.htmlAttackButton)
+		game.createCharacters();
+		game.repositionAllCharacters()
+		$(".character-btn").on("click",game.characterPressed);
+	}
+
+	
 
 } //end game object
 
-
-
-game.initializeCharacters();
+game.initializeGame();
 $(".character-btn").on("click",game.characterPressed);
 $("#attack-button").on("click",game.attackButtonPressed);
 
-
-
-
 }); //end $(document).ready(
-
-
-		// $("#replace-test").html(myChar.html);
-		//this will replace the html of the contents of the ID
