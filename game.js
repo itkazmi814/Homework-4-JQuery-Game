@@ -18,9 +18,9 @@ $(document).ready(function() {
 	charactersArray: [],
 	myCharWins: false,	
 
-	htmlMyCharStats: '<section class="stat-block mx-auto d-block"><div class="row text-center"><div id="my-name" class="col-md-12"><p> Name here </p></div></div><div class="row text-center"><div id="my-hp" class="col-md-12"> HP here </p></div></div><div class="row text-center"><div id="my-atk" class="col-md-12"><p> ATK here </p></div></div></section>',
-	htmlEnemyStats: '<section class="stat-block mx-auto d-block"><div class="row text-center"><div id="enemy-name" class="col-md-12"><p> Name here </p></div></div><div class="row text-center"><div id="enemy-hp" class="col-md-12"><p> HP here </p></div></div><div class="row text-center"><div id="enemy-atk" class="col-md-12"><p> ATK here </p></div></div></section>',
-	htmlPlayButton: '<button id="play-button" class="transparent"><img class"img-fluid mx-auto d-block" style="width: 20%, height: auto" src="assets/playbutton.png"></button>',
+	htmlMyCharStats: '<section class="stat-block d-block align-middle"><div class="row text-center justify-content-center"><div id="my-name" class="col-md-6 message"><p> Name here </p></div></div><div class="row text-center justify-content-center"><div id="my-hp" class="col-md-6 message"> <p> HP here </p></div></div><div class="row text-center justify-content-center"><div id="my-atk" class="col-md-6 message"><p> ATK here </p></div></div>',
+	htmlEnemyStats: '<section class="stat-block"><div class="row text-center justify-content-center"><div id="enemy-name" class="col-md-6 message"><p> Name here </p></div></div><div class="row text-center justify-content-center"><div id="enemy-hp" class="col-md-6 message"> <p> HP here </p></div></div><div class="row text-center justify-content-center"><div id="enemy-atk" class="col-md-6 message"><p> ATK here </p></div></div>',
+	htmlPlayButton: '<button id="play-button-box" class="transparent col-md-12"><img src="assets/playbutton.png"></button>',
 	htmlAttackButton: '<button id="attack-button" class="transparent"><img class="img-fluid mx-auto d-block" src="assets/logo.png"></button>',
 
 
@@ -42,6 +42,7 @@ $(document).ready(function() {
 		this.charactersArray.push(this.suicune)
 		this.charactersArray.push(this.gardevoir)
 
+		$("#instructions-box").html("");
 		$("#pos-one").html(this.pikachu.html);
 		$("#pos-two").html(this.lucario.html);
 		$("#pos-three").html(this.suicune.html);
@@ -81,6 +82,7 @@ $(document).ready(function() {
 				} //end if statement
 			} //end myChar for loop
 		}else if (game.choseMyChar === true) { //if you picked myChar, pick the enemy
+			game.sendMessage("Pick an enemy for " + game.myChar.name + " to fight against")
 			for(var i = 0; i < game.charactersArray.length; i++){
 				if($(context).attr("id") === game.charactersArray[i].name.toLowerCase() && $(context).attr("id") !== game.myChar.name.toLowerCase()){
 					game.enemyChar = game.charactersArray[i]
@@ -124,6 +126,8 @@ $(document).ready(function() {
 		$("#pos-one").html(this.htmlMyCharStats);
 		$("#pos-four").html(this.htmlEnemyStats);
 
+		this.sendMessage("Press POKKEN to fight!")
+
 		this.updateOnScreenStats();
 	}, //end fightSetup 
 
@@ -141,11 +145,13 @@ $(document).ready(function() {
 	myCharAttacks: function () {
 		this.enemyChar.hp -= this.myChar.atkVal //myChar attack enemyChar
 		this.myChar.atkVal += 6; //myChar's atkVal increases
+		this.sendMessage("You dealt " + this.myChar.atkVal + " damage to " + this.enemyChar.name)
 		this.updateOnScreenStats();
 	}, //end myCharAttacks functions
 	
 	enemyCharAttacks: function () {
 		this.myChar.hp -= this.enemyChar.atkVal
+		this.sendMessage()
 		this.updateOnScreenStats()
 	},
 
@@ -161,6 +167,7 @@ $(document).ready(function() {
 
 		for(var i=0; i<this.charactersArray.length; i++){
 			if(this.charactersArray[i].chosen === false){
+				this.sendMessage("Choose your next opponent")
 				$("#pos-one").html(this.myChar.html); //moves myChar in pos1
 				$("#pos-two").html(""); //makes space between myChar and remaining enemies
 
@@ -183,9 +190,9 @@ $(document).ready(function() {
 
 	reset: function() {
 		if(this.myCharWins === true){
-			console.log("you win")
+			this.sendMessage("You won! Click Pikachu to try again")
 		}else{
-			console.log("you lose")
+			this.sendMessage("You lost. Click Pikachu to try again")
 		}
 
 		$("#pos-two").html("");
@@ -203,17 +210,18 @@ $(document).ready(function() {
 	},
 	
 	sendMessage: function(message) {
-		$("#message-box").html(message)
+		$("#message-box").text(message)
 	},
 
 	initializeGame: function () {
 		$("#play-button-box").html(this.htmlPlayButton)
-		this.sendMessage("Click Pikachu to play!")
+	
 		$("#play-button-box").on("click",this.startGame)
 	},
 
 	startGame: function() {
 		$("#play-button-box").html("")
+		game.sendMessage("Pick your Pokemon to start");
 		$("#attack-button").html(game.htmlAttackButton)
 		game.createCharacters();
 		game.repositionAllCharacters()
