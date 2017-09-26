@@ -31,10 +31,10 @@ $(document).ready(function() {
 	}, //end initializeGame
 
 	createCharacters: function () {
-		this.pikachu = new this.characterGenerator("Pikachu",110,6,6,this.htmlPikachu);
-		this.lucario = new this.characterGenerator("Lucario",120,6,6,this.htmlLucario);
-		this.suicune = new this.characterGenerator("Suicune",130,6,6,this.htmlSuicune);
-		this.gardevoir = new this.characterGenerator("Gardevoir",140,6,6,this.htmlGardevoir);
+		this.pikachu = new this.characterGenerator("Pikachu",160,9,9,27,this.htmlPikachu);
+		this.lucario = new this.characterGenerator("Lucario",240,15,5,18,this.htmlLucario);
+		this.suicune = new this.characterGenerator("Suicune",400,10,2,12,this.htmlSuicune);
+		this.gardevoir = new this.characterGenerator("Gardevoir",280,12,3,15,this.htmlGardevoir);
 
 		this.charactersArray = []
 		this.charactersArray.push(this.pikachu)
@@ -49,11 +49,12 @@ $(document).ready(function() {
 		$("#pos-four").html(this.gardevoir.html);
 	},
 
-	characterGenerator: function (nameInput, hpInput, atkValInput, cAtkValInput, htmlInput) {
+	characterGenerator: function (nameInput, hpInput, atkValInput, atkIncInput, cAtkValInput, htmlInput) {
 		//creates a character object
 		this.name = nameInput;
 		this.hp = hpInput
 		this.atkVal = atkValInput;
+		this.atkInc = atkIncInput;
 		this.cAtkVal = cAtkValInput;
 		this.html = htmlInput;
 		this.chosen = false;
@@ -109,7 +110,6 @@ $(document).ready(function() {
 				// $(".character-btn").on("click",game.characterPressed);
 			}
 		}
-
 		game.enemyCharAttacks();
 		if(game.isCharAlive(game.myChar) === false){
 			game.reset(); //myCharWins = false (default); launch LOSE
@@ -139,18 +139,20 @@ $(document).ready(function() {
 		//Update enemyChar stats
 		$("#enemy-name").html(this.enemyChar.name)
 		$("#enemy-hp").html("HP: " + this.enemyChar.hp)
-		$("#enemy-atk").html("ATK: " + this.enemyChar.atkVal)
+		$("#enemy-atk").html("CATK: " + this.enemyChar.cAtkVal)
 	},
 
 	myCharAttacks: function () {
 		this.enemyChar.hp -= this.myChar.atkVal //myChar attack enemyChar
-		this.myChar.atkVal += 6; //myChar's atkVal increases
+		this.myChar.atkVal += this.myChar.atkInc; //myChar's atkVal increases
 		this.sendMessage("You dealt " + this.myChar.atkVal + " damage to " + this.enemyChar.name)
 		this.updateOnScreenStats();
 	}, //end myCharAttacks functions
 	
 	enemyCharAttacks: function () {
-		this.myChar.hp -= this.enemyChar.atkVal
+		if(this.enemyChar.hp > 0){
+			this.myChar.hp -= this.enemyChar.cAtkVal
+		}
 		this.sendMessage()
 		this.updateOnScreenStats()
 	},
